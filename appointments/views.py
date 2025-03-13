@@ -8,9 +8,9 @@ def create_appointment(request):
     if request.method == 'POST':
         validacion=validaciones()
         if (validacion==True):
-            return HttpResponseRedirect(reverse('measurementCreate'))
+            return HttpResponseRedirect(reverse('appointmentCreate'))
         else:
-            return HttpResponseRedirect(reverse('measurementNotCreated'))
+            return HttpResponseRedirect(reverse('appointmentNotCreated'))
 
 
 def aleatorio():
