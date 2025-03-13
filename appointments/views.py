@@ -1,34 +1,43 @@
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Appointment
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+import random
 
-# Simulación de pacientes y doctores
-FAKE_PATIENTS = {1: "Juan Pérez", 2: "María Gómez"}
-FAKE_DOCTORS = {2: "Dr. Rodríguez", 3: "Dra. Fernández"}
-
-@csrf_exempt
+# Create your views here.
 def create_appointment(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
+    if request.method == 'POST':
+        validacion=validaciones()
+        if (validacion==True):
+            return HttpResponseRedirect(reverse('measurementCreate'))
+        else:
+            return HttpResponseRedirect(reverse('measurementNotCreated'))
 
-        # Obtener ID y asignar nombres simulados
-        patient_id = data.get("patient_id")
-        doctor_id = data.get("doctor_id")
 
-        patient_name = FAKE_PATIENTS.get(patient_id, "Paciente Desconocido")
-        doctor_name = FAKE_DOCTORS.get(doctor_id, "Médico Desconocido")
+def aleatorio():
+    numero = random.uniform(0,1)
+    return numero
 
-        # Crear cita en la BD
-        appointment = Appointment.objects.create(
-            patient_name=patient_name,
-            doctor_name=doctor_name,
-            date=data.get("date")
-        )
 
-        return JsonResponse({
-            "message": "Cita creada exitosamente",
-            "appointment_id": appointment.id
-        })
+def validaciones():
+    #revisar que el paciente exista
+    if aleatorio()>0.9:
+        return False
+    #revisar que el paciente no tenga una cita    
+    if aleatorio()>0.95:
+        return False
+    #revisar que el doctor exista
+    if aleatorio()>0.94:
+        return False
+    #revisar que el doctor no tenga una cita
+    if aleatorio()>0.85:
+        return False
+    #revisar que la sala este disponible
+    if aleatorio()>0.9:
+        return False
+    #revisar que la maquinaria este disponible
+    if aleatorio()>0.96:
+        return False
+    else:
+        return True
 
-    return JsonResponse({"error": "Método no permitido"}, status=405)
+
